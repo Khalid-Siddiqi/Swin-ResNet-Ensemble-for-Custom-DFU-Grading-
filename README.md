@@ -1,1 +1,1 @@
-# Swin-ResNet-Ensemble-for-Custom-DFU-Grading-(1-4)
+# Swin-ResNet-Ensemble-for-Custom-DFU-Grading/Classification-(1-4)
