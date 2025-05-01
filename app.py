@@ -2,53 +2,51 @@ from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
 from PIL import Image
 import torch
-from torchvision import transforms
+import torchvision.transforms as T
+from timm import create_model
 import io
 
-# Initialize FastAPI app
 app = FastAPI()
 
-# Load your trained Swin Transformer model
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# Device and model setup
+DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
+NUM_CLASSES = 4
+IMG_SIZE = 224
 
-# Assuming your model class and weights are ready
-# Replace 'YourSwinModelClass' with your actual model class
-from your_model_file import YourSwinModelClass  # Modify this
+# Load class names
+with open('class_names.txt', 'r') as f:
+    CLASS_NAMES = [line.strip() for line in f.readlines()]
 
-model = YourSwinModelClass()
-model.load_state_dict(torch.load("swin_model.pth", map_location=device))
-model.to(device)
-model.eval()
+# Load model
+model = create_model('convnext_xlarge_in22k', pretrained=False, num_classes=NUM_CLASSES)
+model.load_state_dict(torch.load('model.pth', map_location=DEVICE))
+model.to(DEVICE).eval()
 
-# Define preprocessing (you should match training preprocessing)
-preprocess = transforms.Compose([
-    transforms.Resize((224, 224)),  # Swin often uses 224x224
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485, 0.456, 0.406],  # Standard ImageNet normalization
-                         std=[0.229, 0.224, 0.225])
+# Transform
+transform = T.Compose([
+    T.Resize(256),
+    T.CenterCrop(IMG_SIZE),
+    T.ToTensor(),
+    T.Normalize(mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225])
 ])
 
 @app.post("/predict/")
 async def predict(file: UploadFile = File(...)):
     try:
-        # Read image
-        contents = await file.read()
-        image = Image.open(io.BytesIO(contents)).convert('RGB')
-        
-        # Preprocess
-        input_tensor = preprocess(image).unsqueeze(0).to(device)  # Add batch dimension
+        image = Image.open(io.BytesIO(await file.read())).convert("RGB")
+        image = transform(image).unsqueeze(0).to(DEVICE)
 
-        # Predict
         with torch.no_grad():
-            outputs = model(input_tensor)
-            _, predicted = torch.max(outputs, 1)
-            predicted_class = predicted.item()
+            outputs = model(image)
+            pred_class = outputs.argmax(dim=1).item()
+            confidence = torch.softmax(outputs, dim=1)[0][pred_class].item()
 
-        return JSONResponse(content={"prediction": predicted_class})
+        return JSONResponse(content={
+            "predicted_class": CLASS_NAMES[pred_class],
+            "class_index": pred_class,
+            "confidence": round(confidence, 4)
+        })
 
     except Exception as e:
-        return JSONResponse(content={"error": str(e)}, status_code=500)
-
-
-# pip install fastapi uvicorn python-multipart torch torchvision pillow
-# uvicorn app:app --reload
+        return JSONResponse(status_code=500, content={"error": str(e)})
