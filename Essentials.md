@@ -16,3 +16,14 @@ pip freeze > requirements.txt
 echo "✅ Virtual environment 'venv' created."
 echo "👉 Open Command Palette in VS Code (Ctrl+Shift+P), then run: Python: Select Interpreter"
 echo "👉 Choose the one from './venv' folder"
+
+## How to run
+uvicorn main:app --reload
+
+## How TO USE Postman
+Endpoint: POST http://127.0.0.1:8000/predict/
+Body type: form-data
+
+Key: file (type: File)
+
+Value: upload your image
