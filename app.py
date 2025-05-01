@@ -19,7 +19,7 @@ with open('class_names.txt', 'r') as f:
 
 # Load model
 model = create_model('convnext_xlarge_in22k', pretrained=False, num_classes=NUM_CLASSES)
-model.load_state_dict(torch.load('model.pth', map_location=DEVICE))
+model.load_state_dict(torch.load('best_convnext.pth', map_location=DEVICE))
 model.to(DEVICE).eval()
 
 # Transform
