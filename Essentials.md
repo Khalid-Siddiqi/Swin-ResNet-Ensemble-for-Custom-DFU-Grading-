@@ -8,7 +8,7 @@ python -m venv venv
 ### Step 3: Upgrade pip and install common packages
 pip install --upgrade pip
 pip install numpy pandas matplotlib jupyter
-pip install fastapi uvicorn torch torchvision timm pillow ultralytics
+pip install fastapi uvicorn torch torchvision timm pillow ultralytics python-multipart
 
 ### Step 4: Freeze dependencies
 pip freeze > requirements.txt
@@ -22,7 +22,7 @@ echo "👉 Choose the one from './venv' folder"
 uvicorn main:app --reload
 
 ## How TO USE Postman
-Endpoint: POST http://127.0.0.1:8000/predict/
+Endpoint: POST http://127.0.0.1:8000/analyze/
 Body type: form-data
 
 Key: file (type: File)
