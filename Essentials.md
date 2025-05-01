@@ -28,3 +28,14 @@ Body type: form-data
 Key: file (type: File)
 
 Value: upload your image
+
+## What you will get in Response
+Response: You’ll get a streamed image
+
+Headers (Response):
+
+X-DFU-Grade: Predicted class label
+
+X-Class-Index: Class index
+
+X-Confidence: Confidence score
