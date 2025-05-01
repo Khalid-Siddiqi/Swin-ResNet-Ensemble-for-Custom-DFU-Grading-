@@ -8,6 +8,7 @@ python -m venv venv
 ### Step 3: Upgrade pip and install common packages
 pip install --upgrade pip
 pip install numpy pandas matplotlib jupyter
+pip install fastapi uvicorn torch torchvision timm pillow ultralytics
 
 ### Step 4: Freeze dependencies
 pip freeze > requirements.txt

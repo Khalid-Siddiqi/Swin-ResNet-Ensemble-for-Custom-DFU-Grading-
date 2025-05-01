@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\FYP-1\Desktop\Swin-ResNet-Ensemble-for-Custom-DFU-Grading-\venv
+set VIRTUAL_ENV=C:\Users\a\OneDrive\Desktop\FYP\Swin-ResNet-Ensemble-for-Custom-DFU-Grading\venv
 
 if not defined PROMPT set PROMPT=$P$G
 
